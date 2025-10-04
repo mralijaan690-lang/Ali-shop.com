@@ -35,6 +35,7 @@
             background: #f5f7fb;
             color: var(--text);
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         /* Sidebar Styles */
@@ -48,6 +49,7 @@
             z-index: 1000;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
+            transform: translateX(0);
         }
 
         .sidebar-header {
@@ -135,6 +137,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            white-space: nowrap;
         }
 
         .btn-primary {
@@ -444,56 +447,13 @@
             padding: 25px;
         }
 
-        /* Responsive */
-        @media (max-width: 992px) {
-            .sidebar {
-                width: 80px;
-            }
-
-            .sidebar-header h2,
-            .menu-item span {
-                display: none;
-            }
-
-            .main-content {
-                margin-left: 80px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-
-            .user-actions {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .sidebar {
-                width: 0;
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .sidebar.active {
-                width: 260px;
-            }
-        }
-
         /* Tabs */
         .tabs {
             display: flex;
             border-bottom: 1px solid var(--border);
             margin-bottom: 20px;
+            overflow-x: auto;
+            white-space: nowrap;
         }
 
         .tab {
@@ -558,12 +518,6 @@
             cursor: pointer;
         }
 
-        @media (max-width: 768px) {
-            .mobile-menu-btn {
-                display: block;
-            }
-        }
-
         /* Debug Info */
         .debug-info {
             background: #fff3cd;
@@ -573,6 +527,164 @@
             border-radius: 8px;
             margin-bottom: 15px;
             font-size: 14px;
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+            }
+
+            .sidebar-header h2,
+            .menu-item span {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                width: 260px;
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+                margin-top: 60px;
+            }
+
+            .user-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .btn {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .stat-value {
+                font-size: 24px;
+            }
+
+            .content-section {
+                padding: 15px;
+            }
+
+            .withdraw-form {
+                padding: 20px;
+            }
+
+            .withdraw-actions {
+                flex-direction: column;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            /* Make tables scrollable on mobile */
+            .table-container {
+                overflow-x: auto;
+                width: 100%;
+            }
+
+            .data-table {
+                min-width: 600px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 10px 8px;
+                font-size: 14px;
+            }
+
+            /* Adjust modal for mobile */
+            .modal-content {
+                width: 95%;
+                margin: 10px;
+            }
+
+            .modal-header,
+            .modal-body {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .stat-value {
+                font-size: 20px;
+            }
+
+            .stat-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+
+            .withdraw-form {
+                padding: 15px;
+            }
+
+            .form-control {
+                padding: 10px 12px;
+            }
+
+            .btn {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+
+            .section-title {
+                font-size: 16px;
+            }
+
+            .tabs {
+                margin-bottom: 15px;
+            }
+
+            .tab {
+                padding: 8px 15px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -756,21 +868,23 @@
                         <i class="fas fa-spinner fa-spin"></i>
                         <p>Loading orders...</p>
                     </div>
-                    <table class="data-table" id="ordersTable" style="display: none;">
-                        <thead>
-                            <tr>
-                                <th>Order ID</th>
-                                <th>Product</th>
-                                <th>Price</th>
-                                <th>Commission</th>
-                                <th>Status</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ordersTableBody">
-                            <!-- Orders will be populated here -->
-                        </tbody>
-                    </table>
+                    <div class="table-container">
+                        <table class="data-table" id="ordersTable" style="display: none;">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Commission</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTableBody">
+                                <!-- Orders will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <div id="withdrawals-tab" class="tab-content">
@@ -778,20 +892,22 @@
                         <i class="fas fa-spinner fa-spin"></i>
                         <p>Loading withdrawals...</p>
                     </div>
-                    <table class="data-table" id="withdrawalsTable" style="display: none;">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Amount</th>
-                                <th>Account</th>
-                                <th>Status</th>
-                                <th>Processed Date</th>
-                            </tr>
-                        </thead>
-                        <tbody id="withdrawalsTableBody">
-                            <!-- Withdrawals will be populated here -->
-                        </tbody>
-                    </table>
+                    <div class="table-container">
+                        <table class="data-table" id="withdrawalsTable" style="display: none;">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Account</th>
+                                    <th>Status</th>
+                                    <th>Processed Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="withdrawalsTableBody">
+                                <!-- Withdrawals will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -806,21 +922,23 @@
                     <i class="fas fa-spinner fa-spin"></i>
                     <p>Loading all orders...</p>
                 </div>
-                <table class="data-table" id="allOrdersTable" style="display: none;">
-                    <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Product</th>
-                            <th>Price</th>
-                            <th>Commission</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody id="allOrdersTableBody">
-                        <!-- All orders will be populated here -->
-                    </tbody>
-                </table>
+                <div class="table-container">
+                    <table class="data-table" id="allOrdersTable" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Commission</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allOrdersTableBody">
+                            <!-- All orders will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -860,20 +978,22 @@
                     <i class="fas fa-spinner fa-spin"></i>
                     <p>Loading transaction history...</p>
                 </div>
-                <table class="data-table" id="historyTable" style="display: none;">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Type</th>
-                            <th>Amount</th>
-                            <th>Description</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="historyTableBody">
-                        <!-- History will be populated here -->
-                    </tbody>
-                </table>
+                <div class="table-container">
+                    <table class="data-table" id="historyTable" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <!-- History will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -916,21 +1036,23 @@
                     <i class="fas fa-spinner fa-spin"></i>
                     <p>Loading complete history...</p>
                 </div>
-                <table class="data-table" id="modalHistoryTable" style="display: none;">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Amount</th>
-                            <th>Account</th>
-                            <th>Status</th>
-                            <th>Processed Date</th>
-                            <th>Notes</th>
-                        </tr>
-                    </thead>
-                    <tbody id="modalHistoryTableBody">
-                        <!-- Complete history will be populated here -->
-                    </tbody>
-                </table>
+                <div class="table-container">
+                    <table class="data-table" id="modalHistoryTable" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Account</th>
+                                <th>Status</th>
+                                <th>Processed Date</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalHistoryTableBody">
+                            <!-- Complete history will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -1051,102 +1173,67 @@
                 document.getElementById("allOrdersLoading").style.display = "none";
                 document.getElementById("allOrdersTable").style.display = "table";
 
-                showDebugInfo(`Orders loaded: ${totalOrders}, Commission: Rs. ${totalCommission}`);
-
+                // Load withdrawals
+                loadWithdrawals();
             }).catch(error => {
-                console.error("Error loading orders:", error);
                 showDebugInfo(`Error loading orders: ${error.message}`);
-                document.getElementById("ordersLoading").innerHTML = "<p>Error loading orders</p>";
-                document.getElementById("allOrdersLoading").innerHTML = "<p>Error loading orders</p>";
+                console.error("Error loading orders:", error);
             });
-
-            // Load withdrawals
-            loadWithdrawalData();
         }
 
-        // Load Withdrawal Data - FIXED VERSION
-        function loadWithdrawalData() {
-            if (!currentUser) {
-                showDebugInfo("No current user for withdrawal data");
-                return;
-            }
+        // Load Withdrawals
+        function loadWithdrawals() {
+            if (!currentUser) return;
 
-            showDebugInfo("Loading withdrawal data...");
+            db.collection("withdrawals").where("userId", "==", currentUser.uid).get().then(snapshot => {
+                pendingWithdrawAmount = 0;
+                totalWithdrawn = 0;
 
-            // Load ALL withdrawals (not filtered by status)
-            db.collection("withdrawals")
-                .where("userId", "==", currentUser.uid)
-                .orderBy("createdAt", "desc")
-                .get()
-                .then(snapshot => {
-                    showDebugInfo(`Found ${snapshot.size} withdrawal records`);
+                const withdrawalsTableBody = document.getElementById("withdrawalsTableBody");
+                withdrawalsTableBody.innerHTML = "";
 
-                    pendingWithdrawAmount = 0;
-                    totalWithdrawn = 0;
+                showDebugInfo(`Found ${snapshot.size} withdrawals`);
 
-                    const withdrawalsTableBody = document.getElementById("withdrawalsTableBody");
-                    withdrawalsTableBody.innerHTML = "";
+                snapshot.forEach(doc => {
+                    const withdrawal = doc.data();
+                    const amount = withdrawal.amount || 0;
+                    const status = withdrawal.status || "pending";
+                    const accountNumber = withdrawal.accountNumber || 'N/A';
+                    const processedDate = withdrawal.processedAt ? withdrawal.processedAt.toDate().toLocaleDateString() : 'N/A';
+                    const createdAt = withdrawal.createdAt ? withdrawal.createdAt.toDate().toLocaleDateString() : 'N/A';
 
-                    if (snapshot.empty) {
-                        withdrawalsTableBody.innerHTML = `
-                            <tr>
-                                <td colspan="5" class="empty-state">
-                                    <i class="fas fa-history"></i>
-                                    <p>No withdrawal history found</p>
-                                </td>
-                            </tr>
-                        `;
-                        showDebugInfo("No withdrawal records found in database");
-                    } else {
-                        snapshot.forEach(doc => {
-                            const withdrawal = doc.data();
-                            const date = withdrawal.createdAt ? withdrawal.createdAt.toDate().toLocaleDateString() : 'N/A';
-                            const processedDate = withdrawal.processedAt ? withdrawal.processedAt.toDate().toLocaleDateString() : '-';
-                            const statusClass = `status-${withdrawal.status}`;
-
-                            // Calculate totals
-                            if (withdrawal.status === "pending") {
-                                pendingWithdrawAmount += withdrawal.amount || 0;
-                            } else if (withdrawal.status === "approved") {
-                                totalWithdrawn += withdrawal.amount || 0;
-                            }
-
-                            withdrawalsTableBody.innerHTML += `
-                                <tr>
-                                    <td>${date}</td>
-                                    <td>Rs. ${withdrawal.amount}</td>
-                                    <td>${withdrawal.accountNumber}</td>
-                                    <td><span class="status-badge ${statusClass}">${withdrawal.status}</span></td>
-                                    <td>${processedDate}</td>
-                                </tr>
-                            `;
-                        });
-
-                        // Update stats
-                        document.getElementById("pendingWithdraw").textContent = "Rs. " + pendingWithdrawAmount;
-                        document.getElementById("totalWithdrawn").textContent = "Rs. " + totalWithdrawn;
-                        updateAvailableBalance();
-
-                        showDebugInfo(`Withdrawals: Pending Rs. ${pendingWithdrawAmount}, Total Rs. ${totalWithdrawn}`);
+                    if (status === "pending") {
+                        pendingWithdrawAmount += amount;
+                    } else if (status === "approved") {
+                        totalWithdrawn += amount;
                     }
 
-                    // Show table
-                    document.getElementById("withdrawalsLoading").style.display = "none";
-                    document.getElementById("withdrawalsTable").style.display = "table";
+                    const statusClass = `status-${status}`;
+                    const row = `
+                        <tr>
+                            <td>${createdAt}</td>
+                            <td>Rs. ${amount}</td>
+                            <td>${accountNumber}</td>
+                            <td><span class="status-badge ${statusClass}">${status}</span></td>
+                            <td>${processedDate}</td>
+                        </tr>
+                    `;
 
-                })
-                .catch(error => {
-                    console.error("Error loading withdrawal history:", error);
-                    showDebugInfo(`Error loading withdrawals: ${error.message}`);
-                    document.getElementById("withdrawalsLoading").innerHTML = "<p>Error loading withdrawal history</p>";
+                    withdrawalsTableBody.innerHTML += row;
                 });
-        }
 
-        // Update Available Balance
-        function updateAvailableBalance() {
-            const availableWithdrawBalance = Math.max(0, approvedCommission - pendingWithdrawAmount - totalWithdrawn);
-            document.getElementById("availableBalance").textContent = "Rs. " + availableWithdrawBalance;
-            showDebugInfo(`Available balance: Rs. ${availableWithdrawBalance} (Approved: ${approvedCommission}, Pending: ${pendingWithdrawAmount}, Withdrawn: ${totalWithdrawn})`);
+                // Update stats
+                document.getElementById("availableBalance").textContent = "Rs. " + approvedCommission;
+                document.getElementById("totalWithdrawn").textContent = "Rs. " + totalWithdrawn;
+                document.getElementById("pendingWithdraw").textContent = "Rs. " + pendingWithdrawAmount;
+
+                // Show withdrawals table
+                document.getElementById("withdrawalsLoading").style.display = "none";
+                document.getElementById("withdrawalsTable").style.display = "table";
+            }).catch(error => {
+                showDebugInfo(`Error loading withdrawals: ${error.message}`);
+                console.error("Error loading withdrawals:", error);
+            });
         }
 
         // Setup Real-time Listeners
@@ -1154,165 +1241,162 @@
             if (!currentUser) return;
 
             // Real-time orders listener
-            db.collection("orders")
-                .where("userId", "==", currentUser.uid)
+            db.collection("orders").where("userId", "==", currentUser.uid)
                 .onSnapshot(snapshot => {
                     showDebugInfo("Real-time orders update received");
                     loadDashboardData();
-                }, error => {
-                    console.error("Error in real-time orders listener:", error);
-                    showDebugInfo(`Orders listener error: ${error.message}`);
                 });
 
             // Real-time withdrawals listener
-            db.collection("withdrawals")
-                .where("userId", "==", currentUser.uid)
+            db.collection("withdrawals").where("userId", "==", currentUser.uid)
                 .onSnapshot(snapshot => {
                     showDebugInfo("Real-time withdrawals update received");
-                    loadWithdrawalData();
-                }, error => {
-                    console.error("Error in real-time withdrawals listener:", error);
-                    showDebugInfo(`Withdrawals listener error: ${error.message}`);
+                    loadDashboardData();
                 });
         }
 
-        // Withdraw Request
+        // Request Withdraw
         function requestWithdraw() {
-            processWithdrawRequest('withdrawName', 'withdrawNumber', 'withdrawAmount');
-        }
+            const name = document.getElementById("withdrawName").value;
+            const number = document.getElementById("withdrawNumber").value;
+            const amount = parseInt(document.getElementById("withdrawAmount").value);
 
-        function requestWithdraw2() {
-            processWithdrawRequest('withdrawName2', 'withdrawNumber2', 'withdrawAmount2');
-        }
+            if (!name || !number || !amount) {
+                alert("Please fill all fields");
+                return;
+            }
 
-        function processWithdrawRequest(nameField, numberField, amountField) {
+            if (amount < 500) {
+                alert("Minimum withdrawal amount is Rs. 500");
+                return;
+            }
+
+            if (amount > approvedCommission) {
+                alert("Insufficient balance for withdrawal");
+                return;
+            }
+
             if (!currentUser) {
-                alert("Please login first");
+                alert("User not authenticated");
                 return;
             }
 
-            const name = document.getElementById(nameField).value.trim();
-            const number = document.getElementById(numberField).value.trim();
-            const amount = parseInt(document.getElementById(amountField).value);
+            showDebugInfo(`Requesting withdrawal: Rs. ${amount} to ${number}`);
 
-            if (!name || !number) {
-                alert("⚠️ Please enter your full name and phone number.");
-                return;
-            }
-
-            if (isNaN(amount) || amount < 500) {
-                alert("⚠️ Withdraw amount must be at least Rs. 500.");
-                return;
-            }
-
-            const availableWithdrawBalance = Math.max(0, approvedCommission - pendingWithdrawAmount - totalWithdrawn);
-
-            if (amount > availableWithdrawBalance) {
-                alert("⚠️ Withdraw amount cannot exceed your available balance of Rs. " + availableWithdrawBalance);
-                return;
-            }
-
-            if (!/^03\d{9}$/.test(number)) {
-                alert("⚠️ Please enter a valid 11-digit JazzCash/Easypaisa number (03XXXXXXXXX)");
-                return;
-            }
-
-            const withdrawalData = {
+            db.collection("withdrawals").add({
                 userId: currentUser.uid,
-                userEmail: currentUser.email,
                 userName: name,
                 accountNumber: number,
                 amount: amount,
                 status: "pending",
                 createdAt: new Date(),
-                processedAt: null,
-                adminNotes: ""
-            };
+                userEmail: currentUser.email
+            }).then(() => {
+                alert("Withdrawal request submitted successfully!");
+                document.getElementById("withdrawName").value = "";
+                document.getElementById("withdrawNumber").value = "";
+                document.getElementById("withdrawAmount").value = "";
+            }).catch(error => {
+                showDebugInfo(`Error submitting withdrawal: ${error.message}`);
+                alert("Error submitting withdrawal request: " + error.message);
+            });
+        }
 
-            showDebugInfo(`Creating withdrawal request: Rs. ${amount} for ${number}`);
+        // Request Withdraw from withdraw section
+        function requestWithdraw2() {
+            const name = document.getElementById("withdrawName2").value;
+            const number = document.getElementById("withdrawNumber2").value;
+            const amount = parseInt(document.getElementById("withdrawAmount2").value);
 
-            db.collection("withdrawals").add(withdrawalData)
-                .then((docRef) => {
-                    showDebugInfo(`Withdrawal request created with ID: ${docRef.id}`);
-                    alert("✅ Withdraw request submitted successfully! Admin will review and process within 24-48 hours.");
+            if (!name || !number || !amount) {
+                alert("Please fill all fields");
+                return;
+            }
 
-                    // Clear form
-                    document.getElementById(nameField).value = "";
-                    document.getElementById(numberField).value = "";
-                    document.getElementById(amountField).value = "";
+            if (amount < 500) {
+                alert("Minimum withdrawal amount is Rs. 500");
+                return;
+            }
 
-                    // Reload data
-                    loadWithdrawalData();
-                })
-                .catch(error => {
-                    console.error("Error submitting withdraw request:", error);
-                    showDebugInfo(`Withdrawal error: ${error.message}`);
-                    alert("❌ Error submitting withdraw request. Please try again.");
-                });
+            if (amount > approvedCommission) {
+                alert("Insufficient balance for withdrawal");
+                return;
+            }
+
+            if (!currentUser) {
+                alert("User not authenticated");
+                return;
+            }
+
+            showDebugInfo(`Requesting withdrawal: Rs. ${amount} to ${number}`);
+
+            db.collection("withdrawals").add({
+                userId: currentUser.uid,
+                userName: name,
+                accountNumber: number,
+                amount: amount,
+                status: "pending",
+                createdAt: new Date(),
+                userEmail: currentUser.email
+            }).then(() => {
+                alert("Withdrawal request submitted successfully!");
+                document.getElementById("withdrawName2").value = "";
+                document.getElementById("withdrawNumber2").value = "";
+                document.getElementById("withdrawAmount2").value = "";
+            }).catch(error => {
+                showDebugInfo(`Error submitting withdrawal: ${error.message}`);
+                alert("Error submitting withdrawal request: " + error.message);
+            });
         }
 
         // Show Withdraw History Modal
         function showWithdrawHistory() {
             const modal = document.getElementById("withdrawHistoryModal");
-            const content = document.getElementById("modalHistoryTableBody");
+            const tableBody = document.getElementById("modalHistoryTableBody");
             const loading = document.getElementById("modalHistoryLoading");
             const table = document.getElementById("modalHistoryTable");
 
             loading.style.display = "block";
             table.style.display = "none";
+            tableBody.innerHTML = "";
             modal.style.display = "flex";
 
             if (!currentUser) {
-                content.innerHTML = "<tr><td colspan='6'>Please login first</td></tr>";
                 loading.style.display = "none";
-                table.style.display = "table";
                 return;
             }
 
-            showDebugInfo("Loading complete withdrawal history for modal");
+            db.collection("withdrawals").where("userId", "==", currentUser.uid).get().then(snapshot => {
+                loading.style.display = "none";
+                table.style.display = "table";
 
-            db.collection("withdrawals")
-                .where("userId", "==", currentUser.uid)
-                .orderBy("createdAt", "desc")
-                .get()
-                .then(snapshot => {
-                    content.innerHTML = "";
+                snapshot.forEach(doc => {
+                    const withdrawal = doc.data();
+                    const amount = withdrawal.amount || 0;
+                    const status = withdrawal.status || "pending";
+                    const accountNumber = withdrawal.accountNumber || 'N/A';
+                    const processedDate = withdrawal.processedAt ? withdrawal.processedAt.toDate().toLocaleDateString() : 'N/A';
+                    const createdAt = withdrawal.createdAt ? withdrawal.createdAt.toDate().toLocaleDateString() : 'N/A';
+                    const notes = withdrawal.notes || '';
 
-                    if (snapshot.empty) {
-                        content.innerHTML = "<tr><td colspan='6'>No withdraw history found.</td></tr>";
-                        showDebugInfo("No withdrawal records found for modal");
-                    } else {
-                        showDebugInfo(`Showing ${snapshot.size} withdrawal records in modal`);
-                        snapshot.forEach(doc => {
-                            const withdrawal = doc.data();
-                            const date = withdrawal.createdAt ? withdrawal.createdAt.toDate().toLocaleDateString() : 'N/A';
-                            const processedDate = withdrawal.processedAt ? withdrawal.processedAt.toDate().toLocaleDateString() : '-';
-                            const statusClass = `status-${withdrawal.status}`;
-                            const notes = withdrawal.adminNotes || '-';
+                    const statusClass = `status-${status}`;
+                    const row = `
+                        <tr>
+                            <td>${createdAt}</td>
+                            <td>Rs. ${amount}</td>
+                            <td>${accountNumber}</td>
+                            <td><span class="status-badge ${statusClass}">${status}</span></td>
+                            <td>${processedDate}</td>
+                            <td>${notes}</td>
+                        </tr>
+                    `;
 
-                            content.innerHTML += `
-                                <tr>
-                                    <td>${date}</td>
-                                    <td>Rs. ${withdrawal.amount}</td>
-                                    <td>${withdrawal.accountNumber}</td>
-                                    <td><span class="status-badge ${statusClass}">${withdrawal.status}</span></td>
-                                    <td>${processedDate}</td>
-                                    <td>${notes}</td>
-                                </tr>
-                            `;
-                        });
-                    }
-
-                    loading.style.display = "none";
-                    table.style.display = "table";
-                })
-                .catch(error => {
-                    console.error("Error loading withdraw history:", error);
-                    showDebugInfo(`Modal history error: ${error.message}`);
-                    content.innerHTML = "<tr><td colspan='6'>Error loading history. Please try again.</td></tr>";
-                    loading.style.display = "none";
-                    table.style.display = "table";
+                    tableBody.innerHTML += row;
                 });
+            }).catch(error => {
+                showDebugInfo(`Error loading withdrawal history: ${error.message}`);
+                loading.style.display = "none";
+            });
         }
 
         // Close Withdraw History Modal
@@ -1320,138 +1404,58 @@
             document.getElementById("withdrawHistoryModal").style.display = "none";
         }
 
-        // Navigation Functions
-        function showSection(sectionName) {
-            // Hide all sections
-            document.querySelectorAll('.section-content').forEach(section => {
-                section.style.display = 'none';
-            });
-
-            // Show selected section
-            document.getElementById(sectionName + '-section').style.display = 'block';
-
-            // Update active menu item
-            document.querySelectorAll('.menu-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            event.target.classList.add('active');
-
-            // Close sidebar on mobile
-            if (window.innerWidth <= 768) {
-                document.getElementById('sidebar').classList.remove('active');
-            }
-
-            // Load section-specific data
-            if (sectionName === 'history') {
-                loadTransactionHistory();
-            }
-        }
-
-        function loadTransactionHistory() {
-            if (!currentUser) return;
-
-            const loading = document.getElementById("historyLoading");
-            const table = document.getElementById("historyTable");
-            const tableBody = document.getElementById("historyTableBody");
-
-            loading.style.display = "block";
-            table.style.display = "none";
-            tableBody.innerHTML = "";
-
-            // Load orders as transactions
-            db.collection("orders").where("userId", "==", currentUser.uid).get().then(ordersSnapshot => {
-                let historyHTML = "";
-
-                ordersSnapshot.forEach(doc => {
-                    const order = doc.data();
-                    const date = order.createdAt ? order.createdAt.toDate().toLocaleDateString() : 'N/A';
-                    const commissionAmount = order.sellerCommission || order.commissionAmount || 0;
-                    const statusClass = `status-${order.status}`;
-
-                    historyHTML += `
-                        <tr>
-                            <td>${date}</td>
-                            <td>Order Commission</td>
-                            <td>Rs. ${commissionAmount}</td>
-                            <td>Commission from order ${doc.id.substring(0, 8)}...</td>
-                            <td><span class="status-badge ${statusClass}">${order.status}</span></td>
-                        </tr>
-                    `;
-                });
-
-                // Load withdrawals as transactions
-                db.collection("withdrawals")
-                    .where("userId", "==", currentUser.uid)
-                    .orderBy("createdAt", "desc")
-                    .get()
-                    .then(withdrawalsSnapshot => {
-                        withdrawalsSnapshot.forEach(doc => {
-                            const withdrawal = doc.data();
-                            const date = withdrawal.createdAt ? withdrawal.createdAt.toDate().toLocaleDateString() : 'N/A';
-                            const statusClass = `status-${withdrawal.status}`;
-
-                            historyHTML += `
-                                <tr>
-                                    <td>${date}</td>
-                                    <td>Withdrawal</td>
-                                    <td>Rs. -${withdrawal.amount}</td>
-                                    <td>Withdrawal to ${withdrawal.accountNumber}</td>
-                                    <td><span class="status-badge ${statusClass}">${withdrawal.status}</span></td>
-                                </tr>
-                            `;
-                        });
-
-                        tableBody.innerHTML = historyHTML;
-                        loading.style.display = "none";
-                        table.style.display = "table";
-                    })
-                    .catch(error => {
-                        console.error("Error loading withdrawals for history:", error);
-                        tableBody.innerHTML = "<tr><td colspan='5'>Error loading history</td></tr>";
-                        loading.style.display = "none";
-                        table.style.display = "table";
-                    });
-
-            }).catch(error => {
-                console.error("Error loading orders for history:", error);
-                tableBody.innerHTML = "<tr><td colspan='5'>Error loading history</td></tr>";
-                loading.style.display = "none";
-                table.style.display = "table";
-            });
-        }
-
-        // Switch Tabs
+        // Switch Tab
         function switchTab(tabName) {
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
+
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
 
-            document.querySelector(`.tab:nth-child(${tabName === 'orders' ? 1 : 2})`).classList.add('active');
-            document.getElementById(`${tabName}-tab`).classList.add('active');
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
         }
 
-        // Toggle Sidebar (Mobile)
+        // Show Section
+        function showSection(sectionName) {
+            document.querySelectorAll('.section-content').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            event.target.classList.add('active');
+            document.getElementById(sectionName + '-section').style.display = 'block';
+
+            // Close sidebar on mobile after selection
+            if (window.innerWidth <= 768) {
+                toggleSidebar();
+            }
+        }
+
+        // Toggle Sidebar for Mobile
         function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('active');
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
         }
 
         // Logout
         function logout() {
-            if (confirm("Are you sure you want to logout?")) {
-                auth.signOut().then(() => {
-                    window.location.href = "index.html";
-                }).catch(error => {
-                    console.error("Logout error:", error);
-                });
-            }
+            auth.signOut().then(() => {
+                window.location.href = "index.html";
+            }).catch(error => {
+                showDebugInfo(`Error during logout: ${error.message}`);
+                console.error("Error during logout:", error);
+            });
         }
 
-        // Go back to Shop
+        // Go to Shop
         function goShop() {
-            window.location.href = "shop.html";
+            window.location.href = "https://ali-shop.com";
         }
 
         // Close modal when clicking outside
@@ -1462,9 +1466,12 @@
             }
         }
 
-        // Initialize on load
-        document.addEventListener('DOMContentLoaded', function () {
-            console.log("Dashboard initialized");
+        // Handle window resize for responsive behavior
+        window.addEventListener('resize', function () {
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('active');
+            }
         });
     </script>
 </body>
