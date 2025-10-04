@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ali-Shop.com | Login / Signup</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #764ba2;
+        }
+
+        p {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Signup Form -->
+        <div id="signupForm">
+            <h2>Create Account</h2>
+            <input type="email" id="signupEmail" placeholder="Email" required>
+            <input type="password" id="signupPassword" placeholder="Password" required>
+            <button onclick="signup()">Sign Up</button>
+            <p>Already have an account? <a onclick="toggleForms()">Login</a></p>
+        </div>
+
+        <!-- Login Form -->
+        <div id="loginForm" class="hidden">
+            <h2>Login</h2>
+            <input type="email" id="loginEmail" placeholder="Email" required>
+            <input type="password" id="loginPassword" placeholder="Password" required>
+            <button onclick="login()">Login</button>
+            <p>Don’t have an account? <a onclick="toggleForms()">Sign Up</a></p>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCEtGC6NgyOrlL1r6J7PJPg11dF8ybQK0E",
+            authDomain: "ai-mining-c0f85.firebaseapp.com",
+            projectId: "ai-mining-c0f85",
+            storageBucket: "ai-mining-c0f85.firebasestorage.app",
+            messagingSenderId: "227375514915",
+            appId: "1:227375514915:web:035e4925af6a495f42b896",
+            measurementId: "G-41VBZ2K6Y6"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Toggle between forms
+        function toggleForms() {
+            document.getElementById("signupForm").classList.toggle("hidden");
+            document.getElementById("loginForm").classList.toggle("hidden");
+        }
+
+        // Signup Function
+        function signup() {
+            const email = document.getElementById("signupEmail").value;
+            const password = document.getElementById("signupPassword").value;
+            auth.createUserWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    alert("✅ Account Created! Please Login Now.");
+                    // Redirect to login form
+                    document.getElementById("signupForm").classList.add("hidden");
+                    document.getElementById("loginForm").classList.remove("hidden");
+                })
+                .catch(error => alert(error.message));
+        }
+
+        // Login Function
+        function login() {
+            const email = document.getElementById("loginEmail").value;
+            const password = document.getElementById("loginPassword").value;
+            auth.signInWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    alert("✅ Login Successful!");
+                    // Redirect to Shopping Mall Page
+                    window.location.href = "shop.html";
+                })
+                .catch(error => alert(error.message));
+        }
+    </script>
+</body>
+
+</html>

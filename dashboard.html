@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ali-Shop.com | VIP Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --info: #4895ef;
+            --dark: #1e1e2c;
+            --light: #f8f9fa;
+            --sidebar: #1e1e2c;
+            --card-bg: #ffffff;
+            --text: #2d3748;
+            --text-light: #718096;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            transition: all 0.3s;
+            z-index: 1000;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .sidebar-header i {
+            color: var(--success);
+            font-size: 24px;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+            text-decoration: none;
+            color: white;
+            display: block;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 3px solid var(--success);
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+            transition: all 0.3s;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+        }
+
+        .stat-card.orders::before {
+            background: linear-gradient(90deg, #4361ee, #3a0ca3);
+        }
+
+        .stat-card.commission::before {
+            background: linear-gradient(90deg, #4cc9f0, #4895ef);
+        }
+
+        .stat-card.balance::before {
+            background: linear-gradient(90deg, #7209b7, #f72585);
+        }
+
+        .stat-card.withdraw::before {
+            background: linear-gradient(90deg, #f8961e, #f9c74f);
+        }
+
+        .stat-card.pending::before {
+            background: linear-gradient(90deg, #43aa8b, #90be6d);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .stat-card.orders .stat-icon {
+            background: rgba(67, 97, 238, 0.1);
+            color: #4361ee;
+        }
+
+        .stat-card.commission .stat-icon {
+            background: rgba(76, 201, 240, 0.1);
+            color: #4cc9f0;
+        }
+
+        .stat-card.balance .stat-icon {
+            background: rgba(114, 9, 183, 0.1);
+            color: #7209b7;
+        }
+
+        .stat-card.withdraw .stat-icon {
+            background: rgba(248, 150, 30, 0.1);
+            color: #f8961e;
+        }
+
+        .stat-card.pending .stat-icon {
+            background: rgba(67, 170, 139, 0.1);
+            color: #43aa8b;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .stat-change {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .stat-change.positive {
+            color: #10b981;
+        }
+
+        .stat-change.negative {
+            color: #ef4444;
+        }
+
+        /* Content Sections */
+        .content-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .section-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: #f8fafc;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 500;
+            color: var(--text-light);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .status-approved {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .status-rejected {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        /* Withdraw Form */
+        .withdraw-form {
+            background: linear-gradient(135deg, #4361ee, #3a0ca3);
+            color: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .withdraw-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+            }
+
+            .sidebar-header h2,
+            .menu-item span {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .user-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .sidebar {
+                width: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sidebar.active {
+                width: 260px;
+            }
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab.active {
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #cbd5e0;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+        }
+
+        .loading i {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 3000;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        /* Debug Info */
+        .debug-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-crown"></i>
+            <h2>VIP Dashboard</h2>
+        </div>
+        <div class="sidebar-menu">
+            <a href="#dashboard" class="menu-item active" onclick="showSection('dashboard')">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#orders" class="menu-item" onclick="showSection('orders')">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Orders</span>
+            </a>
+            <a href="#withdraw" class="menu-item" onclick="showSection('withdraw')">
+                <i class="fas fa-wallet"></i>
+                <span>Withdraw</span>
+            </a>
+            <a href="#history" class="menu-item" onclick="showSection('history')">
+                <i class="fas fa-history"></i>
+                <span>History</span>
+            </a>
+            <a href="#analytics" class="menu-item" onclick="showSection('analytics')">
+                <i class="fas fa-chart-line"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="#settings" class="menu-item" onclick="showSection('settings')">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Debug Information -->
+        <div class="debug-info" id="debugInfo" style="display: none;">
+            <i class="fas fa-bug"></i> Debug Info: <span id="debugText"></span>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="section-content active">
+            <!-- Header -->
+            <div class="header">
+                <h1>Welcome to Your VIP Dashboard</h1>
+                <div class="user-actions">
+                    <button class="btn btn-outline" onclick="goShop()">
+                        <i class="fas fa-store"></i> Back to Shop
+                    </button>
+                    <button class="btn btn-primary" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card orders">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalOrders">0</div>
+                            <div class="stat-label">Total Orders</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                    </div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i> Real-time data
+                    </div>
+                </div>
+
+                <div class="stat-card commission">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalCommission">Rs. 0</div>
+                            <div class="stat-label">Total Commission</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                    </div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i> Live updates
+                    </div>
+                </div>
+
+                <div class="stat-card balance">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="availableBalance">Rs. 0</div>
+                            <div class="stat-label">Available Balance</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-piggy-bank"></i>
+                        </div>
+                    </div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i> Ready to withdraw
+                    </div>
+                </div>
+
+                <div class="stat-card withdraw">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalWithdrawn">Rs. 0</div>
+                            <div class="stat-label">Total Withdrawn</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-hand-holding-usd"></i>
+                        </div>
+                    </div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i> All time withdrawals
+                    </div>
+                </div>
+
+                <div class="stat-card pending">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="pendingWithdraw">Rs. 0</div>
+                            <div class="stat-label">Pending Withdraw</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="stat-change negative">
+                        <i class="fas fa-clock"></i> Awaiting approval
+                    </div>
+                </div>
+            </div>
+
+            <!-- Withdraw Form -->
+            <div class="withdraw-form">
+                <h3 style="margin-bottom: 20px;"><i class="fas fa-wallet"></i> Withdraw Your Earnings</h3>
+                <div class="form-group">
+                    <label for="withdrawName">Full Name</label>
+                    <input type="text" id="withdrawName" class="form-control" placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label for="withdrawNumber">JazzCash / Easypaisa Number</label>
+                    <input type="text" id="withdrawNumber" class="form-control" placeholder="03XXXXXXXXX">
+                </div>
+                <div class="form-group">
+                    <label for="withdrawAmount">Amount (Minimum Rs. 500)</label>
+                    <input type="number" id="withdrawAmount" class="form-control" placeholder="Enter amount">
+                </div>
+                <div class="withdraw-actions">
+                    <button class="btn btn-primary" onclick="requestWithdraw()"
+                        style="background: white; color: #4361ee;">
+                        <i class="fas fa-paper-plane"></i> Request Withdraw
+                    </button>
+                    <button class="btn btn-outline" onclick="showWithdrawHistory()"
+                        style="border-color: white; color: white;">
+                        <i class="fas fa-history"></i> Withdraw History
+                    </button>
+                </div>
+            </div>
+
+            <!-- Orders and Withdrawals Section -->
+            <div class="content-section">
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('orders')">Recent Orders</div>
+                    <div class="tab" onclick="switchTab('withdrawals')">Withdrawal History</div>
+                </div>
+
+                <div id="orders-tab" class="tab-content active">
+                    <div class="loading" id="ordersLoading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading orders...</p>
+                    </div>
+                    <table class="data-table" id="ordersTable" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Commission</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <!-- Orders will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="withdrawals-tab" class="tab-content">
+                    <div class="loading" id="withdrawalsLoading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading withdrawals...</p>
+                    </div>
+                    <table class="data-table" id="withdrawalsTable" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Account</th>
+                                <th>Status</th>
+                                <th>Processed Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="withdrawalsTableBody">
+                            <!-- Withdrawals will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Other Sections -->
+        <div id="orders-section" class="section-content" style="display: none;">
+            <div class="header">
+                <h1>My Orders</h1>
+            </div>
+            <div class="content-section">
+                <div class="loading" id="allOrdersLoading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading all orders...</p>
+                </div>
+                <table class="data-table" id="allOrdersTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Commission</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="allOrdersTableBody">
+                        <!-- All orders will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="withdraw-section" class="section-content" style="display: none;">
+            <div class="header">
+                <h1>Withdraw Funds</h1>
+            </div>
+            <div class="withdraw-form">
+                <h3 style="margin-bottom: 20px;"><i class="fas fa-wallet"></i> Withdraw Your Earnings</h3>
+                <div class="form-group">
+                    <label for="withdrawName2">Full Name</label>
+                    <input type="text" id="withdrawName2" class="form-control" placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label for="withdrawNumber2">JazzCash / Easypaisa Number</label>
+                    <input type="text" id="withdrawNumber2" class="form-control" placeholder="03XXXXXXXXX">
+                </div>
+                <div class="form-group">
+                    <label for="withdrawAmount2">Amount (Minimum Rs. 500)</label>
+                    <input type="number" id="withdrawAmount2" class="form-control" placeholder="Enter amount">
+                </div>
+                <div class="withdraw-actions">
+                    <button class="btn btn-primary" onclick="requestWithdraw2()"
+                        style="background: white; color: #4361ee;">
+                        <i class="fas fa-paper-plane"></i> Request Withdraw
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="history-section" class="section-content" style="display: none;">
+            <div class="header">
+                <h1>Transaction History</h1>
+            </div>
+            <div class="content-section">
+                <div class="loading" id="historyLoading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading transaction history...</p>
+                </div>
+                <table class="data-table" id="historyTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                        <!-- History will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="analytics-section" class="section-content" style="display: none;">
+            <div class="header">
+                <h1>Sales Analytics</h1>
+            </div>
+            <div class="content-section">
+                <div class="empty-state">
+                    <i class="fas fa-chart-bar"></i>
+                    <h3>Analytics Coming Soon</h3>
+                    <p>Detailed sales analytics and reports will be available here soon.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="settings-section" class="section-content" style="display: none;">
+            <div class="header">
+                <h1>Account Settings</h1>
+            </div>
+            <div class="content-section">
+                <div class="empty-state">
+                    <i class="fas fa-cogs"></i>
+                    <h3>Settings Coming Soon</h3>
+                    <p>Account settings and preferences will be available here soon.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Withdraw History Modal -->
+    <div id="withdrawHistoryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-history"></i> Complete Withdraw History</h3>
+                <button class="close-btn" onclick="closeWithdrawHistory()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="loading" id="modalHistoryLoading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading complete history...</p>
+                </div>
+                <table class="data-table" id="modalHistoryTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Account</th>
+                            <th>Status</th>
+                            <th>Processed Date</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalHistoryTableBody">
+                        <!-- Complete history will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCEtGC6NgyOrlL1r6J7PJPg11dF8ybQK0E",
+            authDomain: "ai-mining-c0f85.firebaseapp.com",
+            projectId: "ai-mining-c0f85",
+            storageBucket: "ai-mining-c0f85.firebasestorage.app",
+            messagingSenderId: "227375514915",
+            appId: "1:227375514915:web:035e4925af6a495f42b896",
+            measurementId: "G-41VBZ2K6Y6"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        let currentUser = null;
+        let totalCommission = 0;
+        let approvedCommission = 0;
+        let pendingWithdrawAmount = 0;
+        let totalWithdrawn = 0;
+
+        // Debug function to show information
+        function showDebugInfo(message) {
+            const debugInfo = document.getElementById('debugInfo');
+            const debugText = document.getElementById('debugText');
+            debugText.textContent = message;
+            debugInfo.style.display = 'block';
+            console.log('DEBUG:', message);
+        }
+
+        // Authentication State Listener
+        auth.onAuthStateChanged(user => {
+            if (!user) {
+                window.location.href = "index.html";
+            } else {
+                currentUser = user;
+                showDebugInfo(`User logged in: ${user.email} (UID: ${user.uid})`);
+                initializeDashboard();
+            }
+        });
+
+        // Initialize Dashboard
+        function initializeDashboard() {
+            loadDashboardData();
+            setupRealTimeListeners();
+        }
+
+        // Load Dashboard Data
+        function loadDashboardData() {
+            if (!currentUser) {
+                showDebugInfo("No current user found");
+                return;
+            }
+
+            showDebugInfo(`Loading data for user: ${currentUser.uid}`);
+
+            // Load orders
+            db.collection("orders").where("userId", "==", currentUser.uid).get().then(snapshot => {
+                let totalOrders = 0;
+                totalCommission = 0;
+                approvedCommission = 0;
+
+                const ordersTableBody = document.getElementById("ordersTableBody");
+                const allOrdersTableBody = document.getElementById("allOrdersTableBody");
+                ordersTableBody.innerHTML = "";
+                allOrdersTableBody.innerHTML = "";
+
+                showDebugInfo(`Found ${snapshot.size} orders`);
+
+                snapshot.forEach(doc => {
+                    const order = doc.data();
+                    totalOrders++;
+
+                    const productPrice = order.productPrice || order.price || 0;
+                    const commissionAmount = order.sellerCommission || order.commissionAmount || 0;
+                    const productName = order.productName || order.productId || 'Product';
+                    const orderDate = order.createdAt ? order.createdAt.toDate().toLocaleDateString() : 'N/A';
+
+                    totalCommission += commissionAmount;
+
+                    if (order.status === "approved") {
+                        approvedCommission += commissionAmount;
+                    }
+
+                    const statusClass = `status-${order.status}`;
+                    const row = `
+                        <tr>
+                            <td>${doc.id.substring(0, 8)}...</td>
+                            <td>${productName}</td>
+                            <td>Rs. ${productPrice}</td>
+                            <td>Rs. ${commissionAmount}</td>
+                            <td><span class="status-badge ${statusClass}">${order.status}</span></td>
+                            <td>${orderDate}</td>
+                        </tr>
+                    `;
+
+                    ordersTableBody.innerHTML += row;
+                    allOrdersTableBody.innerHTML += row;
+                });
+
+                // Update stats
+                document.getElementById("totalOrders").textContent = totalOrders;
+                document.getElementById("totalCommission").textContent = "Rs. " + totalCommission;
+
+                // Show tables
+                document.getElementById("ordersLoading").style.display = "none";
+                document.getElementById("ordersTable").style.display = "table";
+                document.getElementById("allOrdersLoading").style.display = "none";
+                document.getElementById("allOrdersTable").style.display = "table";
+
+                showDebugInfo(`Orders loaded: ${totalOrders}, Commission: Rs. ${totalCommission}`);
+
+            }).catch(error => {
+                console.error("Error loading orders:", error);
+                showDebugInfo(`Error loading orders: ${error.message}`);
+                document.getElementById("ordersLoading").innerHTML = "<p>Error loading orders</p>";
+                document.getElementById("allOrdersLoading").innerHTML = "<p>Error loading orders</p>";
+            });
+
+            // Load withdrawals
+            loadWithdrawalData();
+        }
+
+        // Load Withdrawal Data - FIXED VERSION
+        function loadWithdrawalData() {
+            if (!currentUser) {
+                showDebugInfo("No current user for withdrawal data");
+                return;
+            }
+
+            showDebugInfo("Loading withdrawal data...");
+
+            // Load ALL withdrawals (not filtered by status)
+            db.collection("withdrawals")
+                .where("userId", "==", currentUser.uid)
+                .orderBy("createdAt", "desc")
+                .get()
+                .then(snapshot => {
+                    showDebugInfo(`Found ${snapshot.size} withdrawal records`);
+
+                    pendingWithdrawAmount = 0;
+                    totalWithdrawn = 0;
+
+                    const withdrawalsTableBody = document.getElementById("withdrawalsTableBody");
+                    withdrawalsTableBody.innerHTML = "";
+
+                    if (snapshot.empty) {
+                        withdrawalsTableBody.innerHTML = `
+                            <tr>
+                                <td colspan="5" class="empty-state">
+                                    <i class="fas fa-history"></i>
+                                    <p>No withdrawal history found</p>
+                                </td>
+                            </tr>
+                        `;
+                        showDebugInfo("No withdrawal records found in database");
+                    } else {
+                        snapshot.forEach(doc => {
+                            const withdrawal = doc.data();
+                            const date = withdrawal.createdAt ? withdrawal.createdAt.toDate().toLocaleDateString() : 'N/A';
+                            const processedDate = withdrawal.processedAt ? withdrawal.processedAt.toDate().toLocaleDateString() : '-';
+                            const statusClass = `status-${withdrawal.status}`;
+
+                            // Calculate totals
+                            if (withdrawal.status === "pending") {
+                                pendingWithdrawAmount += withdrawal.amount || 0;
+                            } else if (withdrawal.status === "approved") {
+                                totalWithdrawn += withdrawal.amount || 0;
+                            }
+
+                            withdrawalsTableBody.innerHTML += `
+                                <tr>
+                                    <td>${date}</td>
+                                    <td>Rs. ${withdrawal.amount}</td>
+                                    <td>${withdrawal.accountNumber}</td>
+                                    <td><span class="status-badge ${statusClass}">${withdrawal.status}</span></td>
+                                    <td>${processedDate}</td>
+                                </tr>
+                            `;
+                        });
+
+                        // Update stats
+                        document.getElementById("pendingWithdraw").textContent = "Rs. " + pendingWithdrawAmount;
+                        document.getElementById("totalWithdrawn").textContent = "Rs. " + totalWithdrawn;
+                        updateAvailableBalance();
+
+                        showDebugInfo(`Withdrawals: Pending Rs. ${pendingWithdrawAmount}, Total Rs. ${totalWithdrawn}`);
+                    }
+
+                    // Show table
+                    document.getElementById("withdrawalsLoading").style.display = "none";
+                    document.getElementById("withdrawalsTable").style.display = "table";
+
+                })
+                .catch(error => {
+                    console.error("Error loading withdrawal history:", error);
+                    showDebugInfo(`Error loading withdrawals: ${error.message}`);
+                    document.getElementById("withdrawalsLoading").innerHTML = "<p>Error loading withdrawal history</p>";
+                });
+        }
+
+        // Update Available Balance
+        function updateAvailableBalance() {
+            const availableWithdrawBalance = Math.max(0, approvedCommission - pendingWithdrawAmount - totalWithdrawn);
+            document.getElementById("availableBalance").textContent = "Rs. " + availableWithdrawBalance;
+            showDebugInfo(`Available balance: Rs. ${availableWithdrawBalance} (Approved: ${approvedCommission}, Pending: ${pendingWithdrawAmount}, Withdrawn: ${totalWithdrawn})`);
+        }
+
+        // Setup Real-time Listeners
+        function setupRealTimeListeners() {
+            if (!currentUser) return;
+
+            // Real-time orders listener
+            db.collection("orders")
+                .where("userId", "==", currentUser.uid)
+                .onSnapshot(snapshot => {
+                    showDebugInfo("Real-time orders update received");
+                    loadDashboardData();
+                }, error => {
+                    console.error("Error in real-time orders listener:", error);
+                    showDebugInfo(`Orders listener error: ${error.message}`);
+                });
+
+            // Real-time withdrawals listener
+            db.collection("withdrawals")
+                .where("userId", "==", currentUser.uid)
+                .onSnapshot(snapshot => {
+                    showDebugInfo("Real-time withdrawals update received");
+                    loadWithdrawalData();
+                }, error => {
+                    console.error("Error in real-time withdrawals listener:", error);
+                    showDebugInfo(`Withdrawals listener error: ${error.message}`);
+                });
+        }
+
+        // Withdraw Request
+        function requestWithdraw() {
+            processWithdrawRequest('withdrawName', 'withdrawNumber', 'withdrawAmount');
+        }
+
+        function requestWithdraw2() {
+            processWithdrawRequest('withdrawName2', 'withdrawNumber2', 'withdrawAmount2');
+        }
+
+        function processWithdrawRequest(nameField, numberField, amountField) {
+            if (!currentUser) {
+                alert("Please login first");
+                return;
+            }
+
+            const name = document.getElementById(nameField).value.trim();
+            const number = document.getElementById(numberField).value.trim();
+            const amount = parseInt(document.getElementById(amountField).value);
+
+            if (!name || !number) {
+                alert("⚠️ Please enter your full name and phone number.");
+                return;
+            }
+
+            if (isNaN(amount) || amount < 500) {
+                alert("⚠️ Withdraw amount must be at least Rs. 500.");
+                return;
+            }
+
+            const availableWithdrawBalance = Math.max(0, approvedCommission - pendingWithdrawAmount - totalWithdrawn);
+
+            if (amount > availableWithdrawBalance) {
+                alert("⚠️ Withdraw amount cannot exceed your available balance of Rs. " + availableWithdrawBalance);
+                return;
+            }
+
+            if (!/^03\d{9}$/.test(number)) {
+                alert("⚠️ Please enter a valid 11-digit JazzCash/Easypaisa number (03XXXXXXXXX)");
+                return;
+            }
+
+            const withdrawalData = {
+                userId: currentUser.uid,
+                userEmail: currentUser.email,
+                userName: name,
+                accountNumber: number,
+                amount: amount,
+                status: "pending",
+                createdAt: new Date(),
+                processedAt: null,
+                adminNotes: ""
+            };
+
+            showDebugInfo(`Creating withdrawal request: Rs. ${amount} for ${number}`);
+
+            db.collection("withdrawals").add(withdrawalData)
+                .then((docRef) => {
+                    showDebugInfo(`Withdrawal request created with ID: ${docRef.id}`);
+                    alert("✅ Withdraw request submitted successfully! Admin will review and process within 24-48 hours.");
+
+                    // Clear form
+                    document.getElementById(nameField).value = "";
+                    document.getElementById(numberField).value = "";
+                    document.getElementById(amountField).value = "";
+
+                    // Reload data
+                    loadWithdrawalData();
+                })
+                .catch(error => {
+                    console.error("Error submitting withdraw request:", error);
+                    showDebugInfo(`Withdrawal error: ${error.message}`);
+                    alert("❌ Error submitting withdraw request. Please try again.");
+                });
+        }
+
+        // Show Withdraw History Modal
+        function showWithdrawHistory() {
+            const modal = document.getElementById("withdrawHistoryModal");
+            const content = document.getElementById("modalHistoryTableBody");
+            const loading = document.getElementById("modalHistoryLoading");
+            const table = document.getElementById("modalHistoryTable");
+
+            loading.style.display = "block";
+            table.style.display = "none";
+            modal.style.display = "flex";
+
+            if (!currentUser) {
+                content.innerHTML = "<tr><td colspan='6'>Please login first</td></tr>";
+                loading.style.display = "none";
+                table.style.display = "table";
+                return;
+            }
+
+            showDebugInfo("Loading complete withdrawal history for modal");
+
+            db.collection("withdrawals")
+                .where("userId", "==", currentUser.uid)
+                .orderBy("createdAt", "desc")
+                .get()
+                .then(snapshot => {
+                    content.innerHTML = "";
+
+                    if (snapshot.empty) {
+                        content.innerHTML = "<tr><td colspan='6'>No withdraw history found.</td></tr>";
+                        showDebugInfo("No withdrawal records found for modal");
+                    } else {
+                        showDebugInfo(`Showing ${snapshot.size} withdrawal records in modal`);
+                        snapshot.forEach(doc => {
+                            const withdrawal = doc.data();
+                            const date = withdrawal.createdAt ? withdrawal.createdAt.toDate().toLocaleDateString() : 'N/A';
+                            const processedDate = withdrawal.processedAt ? withdrawal.processedAt.toDate().toLocaleDateString() : '-';
+                            const statusClass = `status-${withdrawal.status}`;
+                            const notes = withdrawal.adminNotes || '-';
+
+                            content.innerHTML += `
+                                <tr>
+                                    <td>${date}</td>
+                                    <td>Rs. ${withdrawal.amount}</td>
+                                    <td>${withdrawal.accountNumber}</td>
+                                    <td><span class="status-badge ${statusClass}">${withdrawal.status}</span></td>
+                                    <td>${processedDate}</td>
+                                    <td>${notes}</td>
+                                </tr>
+                            `;
+                        });
+                    }
+
+                    loading.style.display = "none";
+                    table.style.display = "table";
+                })
+                .catch(error => {
+                    console.error("Error loading withdraw history:", error);
+                    showDebugInfo(`Modal history error: ${error.message}`);
+                    content.innerHTML = "<tr><td colspan='6'>Error loading history. Please try again.</td></tr>";
+                    loading.style.display = "none";
+                    table.style.display = "table";
+                });
+        }
+
+        // Close Withdraw History Modal
+        function closeWithdrawHistory() {
+            document.getElementById("withdrawHistoryModal").style.display = "none";
+        }
+
+        // Navigation Functions
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section-content').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Show selected section
+            document.getElementById(sectionName + '-section').style.display = 'block';
+
+            // Update active menu item
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Close sidebar on mobile
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('active');
+            }
+
+            // Load section-specific data
+            if (sectionName === 'history') {
+                loadTransactionHistory();
+            }
+        }
+
+        function loadTransactionHistory() {
+            if (!currentUser) return;
+
+            const loading = document.getElementById("historyLoading");
+            const table = document.getElementById("historyTable");
+            const tableBody = document.getElementById("historyTableBody");
+
+            loading.style.display = "block";
+            table.style.display = "none";
+            tableBody.innerHTML = "";
+
+            // Load orders as transactions
+            db.collection("orders").where("userId", "==", currentUser.uid).get().then(ordersSnapshot => {
+                let historyHTML = "";
+
+                ordersSnapshot.forEach(doc => {
+                    const order = doc.data();
+                    const date = order.createdAt ? order.createdAt.toDate().toLocaleDateString() : 'N/A';
+                    const commissionAmount = order.sellerCommission || order.commissionAmount || 0;
+                    const statusClass = `status-${order.status}`;
+
+                    historyHTML += `
+                        <tr>
+                            <td>${date}</td>
+                            <td>Order Commission</td>
+                            <td>Rs. ${commissionAmount}</td>
+                            <td>Commission from order ${doc.id.substring(0, 8)}...</td>
+                            <td><span class="status-badge ${statusClass}">${order.status}</span></td>
+                        </tr>
+                    `;
+                });
+
+                // Load withdrawals as transactions
+                db.collection("withdrawals")
+                    .where("userId", "==", currentUser.uid)
+                    .orderBy("createdAt", "desc")
+                    .get()
+                    .then(withdrawalsSnapshot => {
+                        withdrawalsSnapshot.forEach(doc => {
+                            const withdrawal = doc.data();
+                            const date = withdrawal.createdAt ? withdrawal.createdAt.toDate().toLocaleDateString() : 'N/A';
+                            const statusClass = `status-${withdrawal.status}`;
+
+                            historyHTML += `
+                                <tr>
+                                    <td>${date}</td>
+                                    <td>Withdrawal</td>
+                                    <td>Rs. -${withdrawal.amount}</td>
+                                    <td>Withdrawal to ${withdrawal.accountNumber}</td>
+                                    <td><span class="status-badge ${statusClass}">${withdrawal.status}</span></td>
+                                </tr>
+                            `;
+                        });
+
+                        tableBody.innerHTML = historyHTML;
+                        loading.style.display = "none";
+                        table.style.display = "table";
+                    })
+                    .catch(error => {
+                        console.error("Error loading withdrawals for history:", error);
+                        tableBody.innerHTML = "<tr><td colspan='5'>Error loading history</td></tr>";
+                        loading.style.display = "none";
+                        table.style.display = "table";
+                    });
+
+            }).catch(error => {
+                console.error("Error loading orders for history:", error);
+                tableBody.innerHTML = "<tr><td colspan='5'>Error loading history</td></tr>";
+                loading.style.display = "none";
+                table.style.display = "table";
+            });
+        }
+
+        // Switch Tabs
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            document.querySelector(`.tab:nth-child(${tabName === 'orders' ? 1 : 2})`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+
+        // Toggle Sidebar (Mobile)
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        // Logout
+        function logout() {
+            if (confirm("Are you sure you want to logout?")) {
+                auth.signOut().then(() => {
+                    window.location.href = "index.html";
+                }).catch(error => {
+                    console.error("Logout error:", error);
+                });
+            }
+        }
+
+        // Go back to Shop
+        function goShop() {
+            window.location.href = "shop.html";
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function (event) {
+            const modal = document.getElementById("withdrawHistoryModal");
+            if (event.target === modal) {
+                closeWithdrawHistory();
+            }
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("Dashboard initialized");
+        });
+    </script>
+</body>
+
+</html>
