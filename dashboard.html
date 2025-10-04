@@ -1463,10 +1463,10 @@
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
-            
+
             sidebar.classList.toggle('active');
             overlay.classList.toggle('active');
-            
+
             // Prevent body scroll when sidebar is open
             if (sidebar.classList.contains('active')) {
                 document.body.style.overflow = 'hidden';
@@ -1502,7 +1502,7 @@
         window.addEventListener('resize', function () {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
-            
+
             if (window.innerWidth > 768) {
                 sidebar.classList.remove('active');
                 overlay.classList.remove('active');
